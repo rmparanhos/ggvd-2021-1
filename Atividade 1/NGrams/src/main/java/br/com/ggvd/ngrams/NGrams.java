@@ -24,14 +24,20 @@ public class NGrams {
             InterruptedException, ClassNotFoundException {
  
         // Captura o parâmetros passados após o nome da Classe driver.
-        Path inputPath = new Path(args[0]);
-        Path outputDir = new Path(args[1]);
+        String n = args[0];
+        String min = args[1];        
+        Path inputPath = new Path(args[2]);
+        Path outputDir = new Path(args[3]);
  
         // Criar uma configuração
         Configuration conf = new Configuration(true);
  
+        // Argumentos
+        conf.set("n",n);
+        conf.set("min",min);
+
         // Criar o job
-        Job job = new Job(conf, "ContaPalavras");
+        Job job = new Job(conf, "NGrams");
         job.setJarByClass(NGrams.class);
  
         // Definir classes para Map e Reduce
@@ -42,7 +48,7 @@ public class NGrams {
         // Definir as chaves e valor
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
- 
+  
         // Entradas
         FileInputFormat.addInputPath(job, inputPath);
         job.setInputFormatClass(TextInputFormat.class);
