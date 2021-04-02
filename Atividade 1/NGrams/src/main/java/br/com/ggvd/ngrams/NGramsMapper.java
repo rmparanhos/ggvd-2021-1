@@ -10,18 +10,21 @@ import java.util.StringTokenizer;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+//import org.apache.hadoop.mapred.FileSplit;
+
 
 
 public class NGramsMapper extends
-        Mapper<Object, Text, Text, IntWritable> {
+        Mapper<Object, Text, Text, Text> {
 
-    private final IntWritable ONE = new IntWritable(1);
+    //private final IntWritable ONE = new IntWritable(1);
     private final Text word = new Text();
-
+    private final Text values = new Text();
+    
     @Override
     public void map(Object key, Text value, Context context)
             throws IOException, InterruptedException {
@@ -53,7 +56,9 @@ public class NGramsMapper extends
                 }
             }
             word.set(ngram);
-            context.write(word, ONE);
+            String fileName = ((FileSplit) context.getInputSplit()).getPath().getName();
+            values.set("1 " + fileName);
+            context.write(word, values);
         }
     }
 }

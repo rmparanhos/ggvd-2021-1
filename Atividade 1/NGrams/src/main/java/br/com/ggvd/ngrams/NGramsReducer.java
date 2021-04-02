@@ -13,10 +13,10 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.conf.Configuration;
  
 public class NGramsReducer extends
-        Reducer<Text, IntWritable, Text, IntWritable> {
+        Reducer<Text, Text, Text, Text> {
  
     @Override
-    public void reduce(Text text, Iterable<IntWritable> values, Context context)
+    public void reduce(Text text, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
         
         //pega arg1, no caso min
@@ -24,14 +24,29 @@ public class NGramsReducer extends
         String min = conf.get("min");
         int i_min = Integer.parseInt(min);
         
+        Text textValue = new Text();
+        
         int sum = 0;
-        for (IntWritable value : values) {
-            sum += value.get();
+        String arqs = "";
+        //for (IntWritable value : values) {
+        //    sum += value.get();
+        //}
+        for (Text value : values){
+            String line = value.toString();
+            sum += Integer.parseInt(line.split(" ")[0]);
+            if (arqs.contains(line.split(" ")[1])){
+                arqs = arqs;
+            }
+            else{
+                arqs += line.split(" ")[1] + " ";
+            }
         }
         //escreve no context apenas se a soma das ocorrencias for maior que
         //o minimo pedido via arg1
         if (sum >= i_min){
-            context.write(text, new IntWritable(sum));
+            String finalizada = sum + " " + arqs;
+            textValue.set(finalizada);
+            context.write(text, textValue);
         }
     }
 }

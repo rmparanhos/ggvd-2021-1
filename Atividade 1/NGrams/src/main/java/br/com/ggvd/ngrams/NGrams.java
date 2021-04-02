@@ -47,8 +47,8 @@ public class NGrams {
  
         // Definir as chaves e valor
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
-  
+        job.setOutputValueClass(Text.class);
+        
         // Entradas
         FileInputFormat.addInputPath(job, inputPath);
         job.setInputFormatClass(TextInputFormat.class);
