@@ -58,13 +58,9 @@ public class NGrams {
         
         JavaRDD<String> lines = spark.read().textFile(args[2]+"/*").javaRDD();
         
-        Dataset<String> textDS = spark.read().textFile(args[2]+"/*");
-        System.out.println("------------");
-        String nome = textDS.inputFiles()[0];
-        System.out.println(textDS.inputFiles()[0]);
-        System.out.println(textDS.inputFiles()[0]);
-        System.out.println(textDS.inputFiles()[0]);
-        System.out.println(textDS.inputFiles()[0]);
+        //Dataset<String> textDS = spark.read().textFile(args[2]+"/*");
+        //System.out.println("------------");
+        //String nome_arq = textDS.inputFiles()[0];
         
         //JavaRDD<String> words = lines.flatMap(s -> Arrays.asList(SPACE.split(s)).iterator());
         JavaRDD<String> words = lines.flatMap(s -> Arrays.asList(montaNGram(s,Integer.parseInt(args[0]))).iterator());
@@ -73,6 +69,7 @@ public class NGrams {
         
         JavaPairRDD<String, Integer> counts = ones.reduceByKey((i1,i2) -> i1 + i2);
         
+        //Function<Tuple2<String, String>, Boolean> filterMinimo = w -> (Integer.parseInt(w._2.split(" ")[0]) >= Integer.parseInt(args[1]));
         Function<Tuple2<String, Integer>, Boolean> filterMinimo = w -> (w._2 >= Integer.parseInt(args[1]));
         
         JavaPairRDD<String, Integer> result = counts.filter(filterMinimo);
@@ -80,9 +77,9 @@ public class NGrams {
         //salva no arquivo
         result.saveAsTextFile(args[3]);
         
-        List<Tuple2<String,Integer>> output = counts.collect();
+        List<Tuple2<String,Integer>> output = result.collect();
         for (Tuple2<?,?> tuple : output){
-           //System.out.println(tuple._1() + ": " + tuple._2());
+           System.out.println(tuple._1() + ": " + tuple._2());
         }
         spark.stop();    
     }
